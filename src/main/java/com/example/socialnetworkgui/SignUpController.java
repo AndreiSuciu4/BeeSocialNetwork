@@ -69,9 +69,14 @@ public class SignUpController {
         String lastName = lastNameField.getText();
         String username = usernameField.getText();
         String password = passwordField.getText();
-        //String pass = encryption.encrypt(password);
+//        try {
+//            System.out.println(service.findUser(1).getUsername());
+//        } catch (RepositoryException e) {
+//            e.printStackTrace();
+//        }
+        String pass = encryption.encrypt(password);
         try {
-            service.add(username,firstName, lastName,password);
+            service.add(username,firstName, lastName,pass);
             loginButtonClicked(actionEvent);
         } catch (RepositoryException | ValidatorException | IOException e) {
             alert.setTitle("Incorrect data");

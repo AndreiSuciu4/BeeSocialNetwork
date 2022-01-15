@@ -57,15 +57,16 @@ public class AddNewFriendController implements Initializable, Observer {
 
     }
 
-    public void setService(Controller service, int id){
+    public void setService(Controller service, int id) {
         AddNewFriendController.service = service;
         this.userId = id;
         service.addObserver(this);
     }
 
-    private ObservableList<UserModel> loadTable(String name){
+    private ObservableList<UserModel> loadTable(String name) {
         List<UserModel> friends = new ArrayList<>();
         List<User> users = service.getNoFriend(this.userId, name);
+<<<<<<< HEAD
         int pozx =689;
         int pozy = 56;
         for(User user:users){
@@ -73,6 +74,14 @@ public class AddNewFriendController implements Initializable, Observer {
                     String userName = user.getUsername();
                     String firstname = user.getFirstName();
                     String lastname = user.getLastName();
+=======
+        users.stream().
+                forEach(x -> {
+                    String id1 = x.getId().toString();
+                    String userName = x.getUsername();
+                    String firstname = x.getFirstName();
+                    String lastname = x.getLastName();
+>>>>>>> 50163296a5c24b78bd3d8f54d0fdb9e4e77e7e3d
                     UserModel userModel = new UserModel(id1, userName, firstname, lastname);
                     friends.add(userModel);
                     Button button = new Button();
@@ -118,19 +127,20 @@ public class AddNewFriendController implements Initializable, Observer {
         return FXCollections.observableArrayList(friends);
     }
 
-    public void addClicked(){
+    public void addClicked() {
         ObservableList<UserModel> users = userTable.getSelectionModel().getSelectedItems();
-        if(users.isEmpty())
-        {
+        if (users.isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Add new friend error");
             alert.setContentText("Please select a column from table and press the Add new friend button");
             alert.show();
             return;
         }
-        int id1 = Integer.parseInt(users.get(0).getId());
+        String str = users.get(0).getId();
+        int id1 = Integer.parseInt(str);
         try {
             service.addFriendRequest(this.userId, id1);
+            searchClicked();
         } catch (ValidatorException | RepositoryException e) {
             ButtonType yes = new ButtonType("yes", ButtonBar.ButtonData.OK_DONE);
             ButtonType no = new ButtonType("no", ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -152,14 +162,13 @@ public class AddNewFriendController implements Initializable, Observer {
         }
     }
 
-    public void homeClicked(){
+    public void homeClicked() {
         Stage stage = (Stage) homeButton.getScene().getWindow();
         stage.close();
     }
 
     public void searchClicked() {
-        if(searchField.getText().isEmpty())
-        {
+        if (searchField.getText().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setHeaderText("Search error");
             alert.setContentText("Please give a name");
@@ -167,7 +176,7 @@ public class AddNewFriendController implements Initializable, Observer {
         }
         String userName = searchField.getText();
         ObservableList<UserModel> userModels = loadTable(userName);
-        if(userModels.size() == 0)
+        if (userModels.size() == 0)
             invalidUser.setVisible(true);
         else {
             userTable.setItems(userModels);

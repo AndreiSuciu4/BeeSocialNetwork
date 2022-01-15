@@ -1,6 +1,7 @@
 package com.example.socialnetworkgui;
 
 import com.example.business.Controller;
+import com.example.domain.User;
 import com.example.exception.RepositoryException;
 import com.example.utils.Encryption;
 import javafx.event.ActionEvent;
@@ -15,12 +16,14 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
+
 public class LoginController {
     public ImageView logoImage;
     public ImageView leftImage;
     private Controller service;
     public ImageView beeImage;
-
+    public int id;
     @FXML
     private TextField usernameField;
     @FXML
@@ -42,12 +45,22 @@ public class LoginController {
     @FXML
     public void signInClicked(ActionEvent event) throws IOException {
         Encryption encryption = new Encryption();
-        Alert alert = new Alert(Alert.AlertType.ERROR,"Try again", ButtonType.OK);
+        ArrayList<User> users = service.allUsers();
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        boolean find = false;
+        for (User user : users) {
+            if (usernameField.getText().equals(user.getUsername()) && passwordField.getText().equals(encryption.decrypt(user.getPassword()))) {
+                this.id = user.getId();
+                find = true;
+                break;
+            }
+        }
+
+
         try {
             String username = usernameField.getText();
-            String password = passwordField.getText();
+            String password = encryption.encrypt(passwordField.getText());
             int id = service.getUserByUsernameAndPassword(username, password);
-
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("principalScene.fxml"));
             AnchorPane root = loader.load();

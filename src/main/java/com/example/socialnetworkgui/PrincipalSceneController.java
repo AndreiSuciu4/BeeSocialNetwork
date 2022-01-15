@@ -52,7 +52,7 @@ public class PrincipalSceneController implements Initializable, Observer {
     private int userId;
     private int pageNumber = 0;
     private int offset = 0;
-    private int pageSize = 2;
+    private int pageSize = 10;
     List<UserModel> friends = new ArrayList<>();
     public Label nextEvent;
     public Label noOfDays;

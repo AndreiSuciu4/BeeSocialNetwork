@@ -31,24 +31,6 @@ public class Controller extends Observable {
 
 
     /**
-     * @param filename1 a string representing the filename where the users are stored
-     * @param filename2 a string representing the filename where the friendships are stored
-     *                  This is the constructor for when we store the data in files
-     */
-    /*
-    public Controller(String filename1, String filename2) {
-        serviceUsers = new UserService(filename1);
-        serviceFriendships = new FriendshipService(filename2);
-        network = new Graph<>();
-        serviceUsers.all().forEach(user -> {
-            network.addVertex(user.getId());
-        });
-        serviceFriendships.all().forEach(fr -> {
-            network.addEdge(fr.getUserA(), fr.getUserB());
-        });
-    }*/
-
-    /**
      * constructor
      *
      * @param url      the url of database
@@ -56,16 +38,6 @@ public class Controller extends Observable {
      * @param password the password of database
      */
     public Controller(String url, String dbuser, String password) {
-        /*
-        try {
-            serviceUsers = new UserService(url, dbuser, password);
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        serviceFriendships = new FriendshipService(url, dbuser, password);
-        serviceRequests = new RequestService(url, dbuser, password);
-        messageService = new MessageService(url, dbuser, password);*/
         try {
             connection = DriverManager.getConnection(url, dbuser, password);
             statement = connection.createStatement();
@@ -344,8 +316,6 @@ public class Controller extends Observable {
             setChanged();
             notifyObservers();
         } else {
-//            daca la respingerea unei cereri de prietenie vrem sa o stergem din repository,
-//            pentru a putea permite o noua cerere intre cei doi useri
             serviceRequests.remove(fr.getId());
         }
     }
@@ -381,6 +351,14 @@ public class Controller extends Observable {
         }).collect(Collectors.toList());
     }
 
+
+    /**
+     * @param requestModels the list of requests
+     * @param id            the id of the user which we want to see the friend requests
+     * @param pageSize      the amount of new records to the list
+     * @param offset        the index from which we want the requests in the db
+     *                      the function adds pageSize new values to requestModels from the given offset
+     */
     public void getFriendRequestsPag(List<RequestModel> requestModels, int id, int pageSize, int offset) {
         String sql = "SELECT u.id, u.firstname, u.lastname, fr.status, fr.datesend FROM friendship_invites fr INNER JOIN users u ON u.id = fr.usera\n" +
                 "WHERE fr.userb=" + id + " ORDER BY id LIMIT " + pageSize + " OFFSET " + offset;
@@ -426,6 +404,13 @@ public class Controller extends Observable {
     }
 
 
+    /**
+     * @param requestModels the list of requests
+     * @param id            the id of the user who sent the friend requests
+     * @param pageSize      the amount of new records we want added to the list
+     * @param offset        the index from which we want the requests in the db
+     *                      the function adds pageSize new values to requestModels from the given offset
+     */
     public void sentFriendRequestsPag(List<RequestModel> requestModels, int id, int pageSize, int offset) {
         String sql = "SELECT u.id, u.firstname, u.lastname, fr.status, fr.datesend FROM friendship_invites fr INNER JOIN users u ON u.id = fr.userb WHERE fr.usera="
                 + id + "ORDER BY id LIMIT " + pageSize + " OFFSET " + offset + ";";
@@ -655,6 +640,12 @@ public class Controller extends Observable {
     }
 
 
+    /**
+     * @param from integer representing the id of the user which is sending the message
+     * @param mess string representing the content of the message
+     * @throws ValidatorException  if the message is not valid
+     * @throws RepositoryException if the message is sent to himself
+     */
     public void replyAll(int from, String mess) throws ValidatorException, RepositoryException {
         List<User> users = getFriendsForAUser(from);
         List<Integer> to = new ArrayList<>();
@@ -680,40 +671,6 @@ public class Controller extends Observable {
                 )
                 .sorted(Comparator.comparing(MessageDTO::getData))
                 .collect(Collectors.toList());
-//        List<Message> messages = new ArrayList<>();
-//        for(MessageDTO messageDTO : messageDTOS){
-//            List<User> to = new ArrayList<>();
-//            for(Integer user : messageDTO.getTo())
-//            {
-//                try {
-//                    User user1 = serviceUsers.find(user);
-//                    to.add(user1);
-//                } catch (RepositoryException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//            System.out.println("gata to");
-//            User from = null;
-//            try {
-//                from = serviceUsers.find(messageDTO.getFrom());
-//            } catch (RepositoryException e) {
-//                e.printStackTrace();
-//            }
-//            Message message = new Message(from, to, messageDTO.getMessage());
-//            message.setData(messageDTO.getData());
-//            message.setId(messageDTO.getId());
-//            if(messageDTO.getReply() != 0){
-//                try {
-//                    Message message1 = findMessage(messageDTO.getReply());
-//                    System.out.println("pauza");
-//                    message.setReply(message1);
-//                } catch (RepositoryException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//            messages.add(message);
-//        }
-//        return messages;
     }
 
 
@@ -793,7 +750,13 @@ public class Controller extends Observable {
     }
 
 
-    public List<User> getNoFriend(int id, String name) {
+    /**
+     * @param id integer representing the id of the user
+     * @param n  a string
+     * @return a list of users whose username, firstname or lastname contains n and are not friends with the given user
+     */
+    public List<User> getNoFriend(int id, String n) {
+        String name = n.toUpperCase();
         List<User> users = new ArrayList<>();
         List<User> userList = serviceUsers.all();
         List<Integer> users1 = network.getEdges(id);
@@ -802,10 +765,17 @@ public class Controller extends Observable {
                     if (!users1.contains(x.getId()))
                         users.add(x);
                 });
-        return users.stream().filter(x -> (x.getFirstName().equals(name) || x.getUsername().equals(name) || x.getLastName().equals(name)) &&
-                x.getId() != id).collect(Collectors.toList());
+        List<User> sentRequests = this.sentFriendRequests(id).stream().map(UsersRequestsDTO::getTo).collect(Collectors.toList());
+        List<User> receivedRequests = this.getFriendRequests(id).stream().map(UsersRequestsDTO::getFrom).collect(Collectors.toList());
+        return users.stream().filter(x -> ((x.getFirstName().toUpperCase().equals(name) || x.getUsername().toUpperCase().equals(name) || x.getLastName().toUpperCase().equals(name)) &&
+                x.getId() != id) && (!sentRequests.contains(x) && !receivedRequests.contains(x))).collect(Collectors.toList());
     }
 
+    /**
+     * @param id1 integer representing the id of a user
+     * @param id2 integer representing the id of another user
+     * @return a Friendship if the two are friends, null otherwise
+     */
     public Friendship getFriendship(int id1, int id2) {
         List<Friendship> friendships = serviceFriendships.all();
         for (Friendship friendship : friendships)
@@ -824,7 +794,13 @@ public class Controller extends Observable {
      *                 The function adds a number equal to pageSize of the user's friends, starting from the given offset in the db
      */
     public void getFriendsForAUserPag(List<UserModel> friends, int user, int pageSize, int offset) {
-
+        if(serviceUsers.size()<pageSize){
+            friends = serviceUsers.all().stream().map(x->{
+                UserModel um = new UserModel(x.getId().toString(), x.getUsername(), x.getFirstName(), x.getLastName());
+                return um;
+            }).collect(Collectors.toList());
+            return;
+        }
         String sql = "select u1.id, u1.username, u1.firstname, u1.lastname, f1.fr_data from users inner join friendships f1 on users.id = f1.usera inner join users u1 on u1.id = f1.userb WHERE users.id=" +
                 user + " UNION select u.id, u.username, u.firstname, u.lastname, f.fr_data from users inner join friendships f on users.id = f.userb inner join users u on u.id = f.usera\n" +
                 "        where users.id= " + user + "order by id LIMIT " + pageSize + " OFFSET " + offset;
@@ -845,6 +821,12 @@ public class Controller extends Observable {
     }
 
 
+    /**
+     * @param user integer representing the id of a given user
+     * @return a list of all the user's friends
+     * @throws RepositoryException
+     * @throws ValidatorException
+     */
     public List<User> getFriendsForAUser(int user) throws RepositoryException, ValidatorException {
 
         List<Friendship> friendshipList = serviceFriendships.all();
@@ -866,10 +848,21 @@ public class Controller extends Observable {
         return users;
     }
 
+    /**
+     * @param id integer representing the id of the message
+     * @return the message with the given id from the repository
+     * @throws RepositoryException
+     */
     public MessageDTO findMessageDTO(int id) throws RepositoryException {
         return messageService.findMessage(id);
     }
 
+    /**
+     * @param username a string representing a user's username
+     * @param password a string representing a user's password
+     * @return an integer representing the user's id
+     * @throws RepositoryException if such a user does no exists
+     */
     public int getUserByUsernameAndPassword(String username, String password) throws RepositoryException {
         List<User> users = serviceUsers.all();
         for (User user : users)
@@ -879,6 +872,17 @@ public class Controller extends Observable {
         throw new RepositoryException("Incorect username or password");
     }
 
+    /**
+     * @param user   id of the user
+     * @param day1   integer
+     * @param month1 integer
+     * @param year1  integer representing the start date
+     * @param day2   integer
+     * @param month2 integer
+     * @param year2  integer representing the end date
+     * @return a list of Friendships which have been made by the user between the given dates
+     * @throws Exception
+     */
     public List<Friendship> friendshipsBetween2Dates(int user, int day1, int month1, int year1, int day2, int month2, int year2) throws Exception {
         LocalDateTime date1 = LocalDateTime.of(year1, month1, day1, 0, 0);
         LocalDateTime date2 = LocalDateTime.of(year2, month2, day2, 23, 59);
@@ -887,6 +891,17 @@ public class Controller extends Observable {
         ).collect(Collectors.toList());
     }
 
+    /**
+     * @param user   id of the user
+     * @param day1   integer
+     * @param month1 integer
+     * @param year1  integer representing the start date
+     * @param day2   integer
+     * @param month2 integer
+     * @param year2  integer representing the end date
+     * @return a list of messages which have been received by the user between the given dates
+     * @throws Exception
+     */
     public List<MessageDTO> messagesBetween2Dates(int user, int day1, int month1, int year1, int day2, int month2, int year2) throws Exception {
         LocalDateTime date1 = LocalDateTime.of(year1, month1, day1, 0, 0);
         LocalDateTime date2 = LocalDateTime.of(year2, month2, day2, 23, 59);
@@ -939,11 +954,23 @@ public class Controller extends Observable {
         return messages;
     }
 
+    /**
+     * @param name        string representing the event's name
+     * @param description string representing the event's description
+     * @param date        LocalDate representing the date of the event
+     * @throws ValidatorException  if the event is not valid
+     * @throws RepositoryException if an equal event already exists
+     */
     public void addNewEvent(String name, String description, LocalDate date) throws ValidatorException, RepositoryException {
         eventService.addNewEvent(name, description, date);
     }
 
 
+    /**
+     * @param userId  integer representing a user's id
+     * @param eventId integer representing an event's id
+     *                removes the subscription of the given user to the given event
+     */
     public void removeSubscription(Integer userId, Integer eventId) {
         String sql = "DELETE FROM users_events WHERE user_id=" + userId.toString() + " AND ev_id=" + eventId.toString() + ";";
         try {
@@ -955,6 +982,11 @@ public class Controller extends Observable {
         }
     }
 
+    /**
+     * @param userId  integer representing a user's id
+     * @param eventId integer representing an event's id
+     *                adds attendance of the given user to the given event
+     */
     public void addAttendance(Integer userId, Integer eventId) {
         String sql = "INSERT INTO users_events(user_id, ev_id) VALUES (" +
                 userId.toString() + "," + eventId.toString() + ");";
@@ -992,6 +1024,11 @@ public class Controller extends Observable {
         return eventList;
     }
 
+
+    /**
+     * @param id integer representing the id of the user
+     * @return a list of events to which the given user is not subscribed
+     */
     public List<Event> eventsNotAttendedByUser(Integer id) {
         List<Event> eventList = new ArrayList<>();
         List<Event> all = eventService.all();
@@ -1005,6 +1042,11 @@ public class Controller extends Observable {
         return eventList;
     }
 
+
+    /**
+     * @param id integer representing the id of a user
+     * @return an event representing the next event which will happen for the given user
+     */
     public Event nextEventForUser(Integer id) {
         String sql = "SELECT e.ev_id, e.name, e.description, e.date FROM users_events " +
                 "INNER JOIN events e ON e.ev_id = users_events.ev_id WHERE user_id=" + id.toString() + " ORDER BY e.date ASC LIMIT 1;";
@@ -1025,6 +1067,11 @@ public class Controller extends Observable {
         return null;
     }
 
+
+    /**
+     * @param id integer representing the id of a user
+     * @return the number of days untill the next event
+     */
     public long daysUntilNextEvent(Integer id) {
         Event ev = nextEventForUser(id);
         return ChronoUnit.DAYS.between(LocalDate.now(), ev.getDate());

@@ -55,7 +55,18 @@ public class UserService {
      * @return an integer representing the size of the repository
      */
     public int size() {
-        return repository.size();
+        int si=0;
+        String sql = "select count(*) from users";
+        try{
+            ResultSet rs = statement.executeQuery(sql);
+            if(rs.next()){
+                si = rs.getInt("count");
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+//        return repository.size();
+        return si;
     }
 
     /**
@@ -76,12 +87,14 @@ public class UserService {
         try {
             while (true) {
                 User user = repository.find(id);
+                if (user == null) {
+                    break;
+                }
                 id++;
             }
-
-        } catch (Exception e) {
-            return id;
+        } catch (Exception ignored) {
         }
+        return id;
     }
 
     /**
@@ -145,10 +158,9 @@ public class UserService {
 
 
     /**
-     *
      * @param username a string representing the username of the user we want to find
      * @return a UserModel containing the id, firstname and lastname of the user with the given username
-     *      or null if such a user does not exist
+     * or null if such a user does not exist
      */
     public UserModel findByUsername(String username) {
         String sql = "SELECT * FROM users WHERE username='" + username + "';";
