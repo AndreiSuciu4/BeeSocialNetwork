@@ -7,8 +7,7 @@ import com.example.exception.RepositoryException;
 import com.example.exception.ValidatorException;
 import com.example.socialnetworkgui.RequestModel;
 import com.example.socialnetworkgui.UserModel;
-import utils.Graph;
-
+import com.example.utils.Graph;
 import java.sql.*;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
@@ -611,6 +610,11 @@ public class Controller extends Observable {
         return messages;
     }
 
+    public List<MessageDTO> allMessages(int id) throws RepositoryException {
+        return  messageService.findMessages(id);
+
+    }
+
     /**
      * @param id1     integer representing the id of the message
      * @param from    integer representing the user who sent the message
@@ -767,8 +771,7 @@ public class Controller extends Observable {
                 });
         List<User> sentRequests = this.sentFriendRequests(id).stream().map(UsersRequestsDTO::getTo).collect(Collectors.toList());
         List<User> receivedRequests = this.getFriendRequests(id).stream().map(UsersRequestsDTO::getFrom).collect(Collectors.toList());
-        return users.stream().filter(x -> ((x.getFirstName().toUpperCase().equals(name) || x.getUsername().toUpperCase().equals(name) || x.getLastName().toUpperCase().equals(name)) &&
-                x.getId() != id) && (!sentRequests.contains(x) && !receivedRequests.contains(x))).collect(Collectors.toList());
+        return users.stream().filter(x -> (x.getUsername().toUpperCase().equals(name)  && x.getId() != id)).collect(Collectors.toList());
     }
 
     /**

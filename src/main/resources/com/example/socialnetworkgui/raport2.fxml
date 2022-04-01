@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.socialnetworkgui.Raport2Controller">
+<AnchorPane prefHeight="400.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.socialnetworkgui.Raport2Controller">
     <children>
-        <ScrollPane fx:id="scrollPane" layoutX="198.0" layoutY="25.0" prefHeight="350.0" prefWidth="387.0">
+      <ImageView fx:id="background" fitHeight="453.0" fitWidth="903.0" pickOnBounds="true" preserveRatio="true">
+      </ImageView>
+      <AnchorPane prefHeight="453.0" prefWidth="806.0">
+         <children>
+              <ScrollPane fx:id="scrollPane" layoutX="195.0" layoutY="32.0" prefHeight="350.0" prefWidth="387.0">
         </ScrollPane>
+         </children>
+      </AnchorPane>
     </children>
 </AnchorPane>

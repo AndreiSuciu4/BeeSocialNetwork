@@ -5,6 +5,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 import java.net.URL;
@@ -21,6 +23,7 @@ public class NewEventController implements Initializable {
     public ComboBox<Integer> year;
     public Controller service;
     public Button addButton;
+    public ImageView background;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -43,6 +46,8 @@ public class NewEventController implements Initializable {
             days.add(i);
         ObservableList<Integer> days1 = FXCollections.observableArrayList(days);
         day.setItems(days1);
+        Image image1 = new Image("file:images/back.jpg");
+        background.setImage(image1);
     }
 
     public void setService(Controller service) {
@@ -53,6 +58,16 @@ public class NewEventController implements Initializable {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         String name = nameField.getText();
         String desription = descriptionField.getText();
+        if(name == null || desription == null){
+            alert.setHeaderText("Incorrect data");
+            alert.show();
+            return;
+        }
+        if(day.getValue() == null || month.getValue() == null || year.getValue() == null){
+            alert.setHeaderText("Incorrect data");
+            alert.show();
+            return;
+        }
         int d = Integer.parseInt(day.getValue().toString());
         int m = Integer.parseInt(month.getValue().toString());
         int y = Integer.parseInt(year.getValue().toString());

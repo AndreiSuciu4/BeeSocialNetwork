@@ -1,38 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 
-<?import javafx.scene.control.cell.CheckBoxTableCell?>
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.example.socialnetworkgui.FriendRequestsController"
-            prefHeight="400.0" prefWidth="600.0"
-            style="-fx-background-color: #fad907;">
+<AnchorPane prefHeight="400.0" prefWidth="800.0" style="-fx-background-color: #fad907;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.socialnetworkgui.FriendRequestsController">
 
     <children>
-        <TableView fx:id="requestsTable" layoutX="100.0" layoutY="36.0" prefHeight="100.0" prefWidth="450.0"
-                   HBox.hgrow="NEVER" style="-fx-background-color: #fad907; -fx-background-radius: 10;">
-            <columns>
-                <TableColumn fx:id="id" prefWidth="75.0" text="id" style="-fx-background-color: #fad907;"/>
-                <TableColumn fx:id="firstName" prefWidth="75.0" text="FirstName" style="-fx-background-color: #fad907;"/>
-                <TableColumn fx:id="lastName" prefWidth="75.0" text="LastName" style="-fx-background-color: #fad907;"/>
-                <TableColumn fx:id="data" prefWidth="150.0" text="Data" style="-fx-background-color: #fad907;"/>
-                <TableColumn fx:id="status" prefWidth="75.0" text="Status" style="-fx-background-color: #fad907;"/>
-            </columns>
-        </TableView>
-        <HBox layoutX="100.0" layoutY="267.0" spacing="20">
-            <Button fx:id="acceptButton" mnemonicParsing="false" onAction="#acceptRequest" text="Accept"
-                    style="-fx-background-color: #00ff00"/>
-            <Button fx:id="declineButton" mnemonicParsing="false" onAction="#declineRequest" text="Delete"
-                    style="-fx-background-color: #ff0000"/>
-            <Button fx:id="acceptAllButton" mnemonicParsing="false" onAction="#acceptAll" text="Accept All"/>
-            <Button fx:id="myFriendRequests" mnemonicParsing="false" onAction="#myRequests" text="My Friend Requests"/>
-            <Button fx:id="closeButton" mnemonicParsing="false" onAction="#returnB" text="Close" cancelButton="true"/>
-        </HBox>
+      <ImageView fx:id="backImage" fitHeight="447.0" fitWidth="803.0" pickOnBounds="true" preserveRatio="true" />
+      <AnchorPane prefHeight="400.0" prefWidth="800.0">
+         <children>
+             <Button fx:id="homeButton" layoutX="14.0" layoutY="18.0" mnemonicParsing="false" onAction="#homeClicked" prefHeight="38.0" prefWidth="118.0" style="-fx-background-color: white; -fx-background-radius: 500;" text=" Home">
+                 <graphic>
+                     <ImageView fx:id="homeImage" fitHeight="30.0" fitWidth="35.0">
+                     </ImageView>
+                 </graphic>
+             </Button>
+              <TableView fx:id="requestsTable" layoutX="139.0" layoutY="60.0" prefHeight="100.0" prefWidth="449.0" style="-fx-background-color: #fad907; -fx-background-radius: 10;">
+                  <columns>
+                      <TableColumn fx:id="id" minWidth="0.0" prefWidth="0.0" style="-fx-background-color: #fad907;" text="id" />
+                      <TableColumn fx:id="firstName" prefWidth="127.199951171875" style="-fx-background-color: #fad907;" text="FirstName" />
+                      <TableColumn fx:id="lastName" prefWidth="120.7999267578125" style="-fx-background-color: #fad907;" text="LastName" />
+                      <TableColumn fx:id="data" prefWidth="128.80001831054688" style="-fx-background-color: #fad907;" text="Data" />
+                      <TableColumn fx:id="status" prefWidth="75.0" style="-fx-background-color: #fad907;" text="Status" />
+                  </columns>
+              </TableView>
+              <HBox layoutX="154.0" layoutY="273.0" spacing="20">
+                  <Button fx:id="acceptButton" mnemonicParsing="false" onAction="#acceptRequest" style="-fx-background-color: #fad907; -fx-background-radius: 8;" text="Accept" />
+                  <Button fx:id="declineButton" mnemonicParsing="false" onAction="#declineRequest" style="-fx-background-color: #fad907; -fx-background-radius: 8;" text="Delete" />
+                  <Button fx:id="acceptAllButton" mnemonicParsing="false" onAction="#acceptAll" style="-fx-background-color: #fad907;-fx-background-radius: 8;" text="Accept All" />
+                  <Button fx:id="myFriendRequests" mnemonicParsing="false" onAction="#myRequests" style="-fx-background-color: #fad907;-fx-background-radius: 8;" text="My Friend Requests" />
+                  <Button fx:id="closeButton" cancelButton="true" mnemonicParsing="false" onAction="#returnB" style="-fx-background-color: #fad907;-fx-background-radius: 8;" text="Close" />
+              </HBox>
+         </children>
+      </AnchorPane>
     </children>
 
 

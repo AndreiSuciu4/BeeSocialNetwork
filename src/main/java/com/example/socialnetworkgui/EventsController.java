@@ -34,6 +34,9 @@ public class EventsController implements Initializable, Observer {
     public int userId;
     public ImageView homeImage;
     public Label labelTable;
+    public ImageView background;
+    public ImageView event1;
+    public ImageView event2;
 
 
     @Override
@@ -45,6 +48,12 @@ public class EventsController implements Initializable, Observer {
         id.setVisible(false);
         Image image = new Image("file:images/homeButtonImage.jpg");
         homeImage.setImage(image);
+        Image image1 = new Image("file:images/back.jpg");
+        Image image2 = new Image("file:images/eventIcon.jpg");
+        event1.setImage(image2);
+        event2.setImage(image2);
+
+        background.setImage(image1);
         attendButton.setDisable(true);
     }
 
@@ -92,6 +101,7 @@ public class EventsController implements Initializable, Observer {
             alert.setTitle("Delete error");
             alert.setContentText("Please select a column from table and press the delete button");
             alert.show();
+            return;
         }
         int eventId = Integer.parseInt(events.get(0).getId());
         service.removeSubscription(userId, eventId);
@@ -104,16 +114,14 @@ public class EventsController implements Initializable, Observer {
 
     public void findEventsClicked() {
         if (!unsubscribeButton.isDisabled()) {
-            findEventsButton.setText("My events");
+            findEventsButton.setText("    My events");
             unsubscribeButton.setDisable(true);
             attendButton.setDisable(false);
-            labelTable.setText("Other events");
             eventTable.setItems(loadTableOtherEvents());
         } else {
-            findEventsButton.setText("Find events");
+            findEventsButton.setText("    Find events");
             unsubscribeButton.setDisable(false);
             attendButton.setDisable(true);
-            labelTable.setText("My events");
             eventTable.setItems(loadTable());
 
         }
@@ -126,6 +134,7 @@ public class EventsController implements Initializable, Observer {
             alert.setTitle("Select error");
             alert.setContentText("Please select a column from table and press the attendance button");
             alert.show();
+            return;
         }
         int eventId = Integer.parseInt(events.get(0).getId());
         service.addAttendance(userId, eventId);

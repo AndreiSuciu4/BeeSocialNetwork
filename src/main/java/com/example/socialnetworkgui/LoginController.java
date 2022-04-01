@@ -1,7 +1,7 @@
 package com.example.socialnetworkgui;
 
 import com.example.business.Controller;
-import com.example.domain.User;
+import com.example.domain.*;
 import com.example.exception.RepositoryException;
 import com.example.utils.Encryption;
 import javafx.event.ActionEvent;
@@ -14,6 +14,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import java.util.List;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 public class LoginController {
     public ImageView logoImage;
     public ImageView leftImage;
+    public javafx.scene.control.CheckBox CheckBox;
     private Controller service;
     public ImageView beeImage;
     public int id;
@@ -59,13 +61,20 @@ public class LoginController {
 
         try {
             String username = usernameField.getText();
-            String password = encryption.encrypt(passwordField.getText());
-            int id = service.getUserByUsernameAndPassword(username, password);
+            String password = passwordField.getText();
+            int id = service.getUserByUsernameAndPassword(username, encryption.encrypt(password));
+            User user = service.findUser(id);
+            String firstName = user.getFirstName();
+            String lastName = user.getLastName();
+            List<UsersFriendsDTO> listFriendships = service.getFriends(id);
+            List<MessageDTO> messages = service.allMessages(id);
+            List<UsersRequestsDTO> requests = service.getFriendRequests(id);
+            Page page = new Page(firstName, lastName, listFriendships, messages, requests);
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("principalScene.fxml"));
             AnchorPane root = loader.load();
             PrincipalSceneController principalSceneController = loader.getController();
-            principalSceneController.setService(service, id);
+            principalSceneController.setService(service, id, page);
             Scene scene = new Scene(root, 800, 400);
             Stage stage;
             stage = (Stage)((Node)event.getSource()).getScene().getWindow();
@@ -97,4 +106,5 @@ public class LoginController {
         stage.show();
 
     }
+
 }

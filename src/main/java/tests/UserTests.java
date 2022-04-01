@@ -27,7 +27,6 @@ public class UserTests {
         User anotherUser = new User("c",anotherName, anotherSurname,"srtg");
         anotherUser.setId(2);
         assertEquals(user, otherUser);
-       // assertEquals(user.toString(), "1 | Pop Valentin");
     }
 
 }

@@ -10,13 +10,13 @@ import com.example.exception.ValidatorException;
 import java.util.List;
 import java.util.Scanner;
 
-public class CevaUI {
+public class PrincipalUI {
     private Controller service;
 
     /**
      * Constructor for the UI class
      */
-    public CevaUI(Controller cont) {
+    public PrincipalUI(Controller cont) {
         this.service = cont;
     }
 
@@ -151,25 +151,6 @@ public class CevaUI {
     }
 
     private void allFriendships(int id) {
-        /*service.allFriendships().stream().filter(friendship -> friendship.isPart(id)).
-                map(friendship -> {
-                    if (friendship.getUserA() == id) {
-                        try {
-                            return service.findUser(friendship.getUserB());
-                        } catch (RepositoryException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        try {
-                            return service.findUser(friendship.getUserA());
-                        } catch (RepositoryException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    return null;
-                }).collect(Collectors.toList()).forEach(System.out::println);
-
-         */
         try {
             List<UsersFriendsDTO> usersFriendsDTOList = service.getFriends(id);
             usersFriendsDTOList.forEach(System.out::println);

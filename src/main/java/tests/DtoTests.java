@@ -19,7 +19,6 @@ public class DtoTests {
         assertEquals(dto.getUsera(), user1);
         assertEquals(dto.getUserb(), user2);
         assertEquals(dto.getDate().format(formatter),"2021-11-23 11:30:00" );
-       // assertEquals(dto.toString(), "andrei | suciu | 2021-11-23 11:30:00");
     }
 
     @Test
@@ -31,6 +30,5 @@ public class DtoTests {
         assertEquals(dto.getFrom(), user1);
         assertEquals(dto.getTo(), user2);
         assertEquals(dto.getStatus(), Status.APPROVED);
-    //    assertEquals(dto.toString(), "from=1 | sava tudor, to=2 | suciu andrei, status=APPROVED");
     }
 }

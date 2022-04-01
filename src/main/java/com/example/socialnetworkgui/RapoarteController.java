@@ -179,7 +179,7 @@ public class RapoarteController implements Initializable {
         AnchorPane root = loader.load();
         Raport2Controller raport2Controller = loader.getController();
         raport2Controller.setLists(service, messages, userId, from, start, end);
-        Scene scene = new Scene(root, 750, 400);
+        Scene scene = new Scene(root, 800, 400);
         Stage stage = new Stage();
         stage.setTitle("Raport2");
         stage.setScene(scene);
@@ -208,7 +208,6 @@ public class RapoarteController implements Initializable {
         } catch (Exception e) {
             alert.setTitle("Message Here...");
             alert.setHeaderText("Incorrect date");
-            e.printStackTrace();
             alert.setTitle("Warning");
             alert.show();
         }
@@ -222,7 +221,6 @@ public class RapoarteController implements Initializable {
         } catch (Exception e) {
             alert.setTitle("Message Here...");
             alert.setHeaderText("Incorrect date");
-            e.printStackTrace();
             alert.setTitle("Warning");
             alert.show();
         }
@@ -351,7 +349,6 @@ public class RapoarteController implements Initializable {
             alert.setContentText(e.getMessage());
             alert.setTitle("Warning");
             alert.show();
-            e.printStackTrace();
         }
     }
 

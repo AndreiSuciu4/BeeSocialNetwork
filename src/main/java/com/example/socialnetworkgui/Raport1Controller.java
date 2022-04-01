@@ -91,7 +91,7 @@ public class Raport1Controller implements Initializable {
         label.setText(text);
         label.setStyle("-fx-background-radius: 5");
         label.setTextAlignment(TextAlignment.JUSTIFY);
-        label.setMaxWidth(300);
+        label.setMaxWidth(600);
         label.setFont(new Font("Arial", 18));
         label.setWrapText(true);
         label.setLayoutX(x);

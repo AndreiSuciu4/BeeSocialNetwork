@@ -126,8 +126,6 @@ public class MessageService {
             if(x.getTo().contains(user))
                 listMessages.add(x);
         });
-        if (listMessages.size() == 0)
-            throw new RepositoryException("no messages for this user");
         return listMessages;
     }
 

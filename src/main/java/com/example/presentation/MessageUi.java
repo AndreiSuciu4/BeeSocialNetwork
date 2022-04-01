@@ -147,24 +147,6 @@ public class MessageUi {
     }
 
     /**
-     * UI for printConversation
-     * @param input Scanner
-     */
-//    private void printConversation(Scanner input){
-//        int id1;
-//        System.out.println("Enter the id of user!");
-//        id1 = Integer.parseInt(input.nextLine());
-//        List<Message> messages = null;
-//        try {
-//            messages = service.getConversation(this.id, id1);
-//        } catch (RepositoryException e) {
-//            System.out.println(e.getMessage());
-//        }
-//        messages.forEach(System.out::println);
-//
-//    }
-
-    /**
      * Prints the menu
      */
     private void menu() {
@@ -192,7 +174,6 @@ public class MessageUi {
                     case 4->removeMessage(input);
                     case 5->printSentMessage();
                     case 6->printReceivedMessages();
-                   // case 7->printConversation(input);
                 }
             } catch (Exception e) {
                 System.out.println(e.getMessage());

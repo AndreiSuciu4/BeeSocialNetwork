@@ -27,12 +27,6 @@ public class UserService {
      * @param password the password of database
      */
     public UserService(String url, String user, String password) throws SQLException {
-        /*try {
-            this.repository = new DataBaseUserRepository(url, user, password);
-
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }*/
         connection = DriverManager.getConnection(url, user, password);
         statement = connection.createStatement();
         this.repository = new DataBaseUserRepository(connection, statement);

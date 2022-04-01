@@ -21,6 +21,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -39,6 +41,9 @@ public class FriendRequestsController implements Initializable, Observer {
     public TableColumn<RequestModel, String> id;
     public TableColumn data;
     public TableColumn status;
+    public ImageView backImage;
+    public Button homeButton;
+    public ImageView homeImage;
     private Controller service;
     private int userId;
     private int pageNumberRec = 0;
@@ -59,7 +64,13 @@ public class FriendRequestsController implements Initializable, Observer {
         lastName.setCellValueFactory(new PropertyValueFactory<>("LastName"));
         data.setCellValueFactory(new PropertyValueFactory<>("data"));
         status.setCellValueFactory(new PropertyValueFactory<>("status"));
-        id.setVisible(true);
+        id.setVisible(false);
+        Image image1 = new Image("file:images/back.jpg");
+        backImage.setImage(image1);
+        Image image = new Image("file:images/homeButtonImage.jpg");
+        homeImage.setImage(image);
+
+        requestsTable.setPlaceholder(new Label("No friend requests yet"));
 
 
         Platform.runLater(() -> {
@@ -80,28 +91,13 @@ public class FriendRequestsController implements Initializable, Observer {
         this.service = service;
         this.userId = id;
         service.addObserver(this);
-        requestsTable.setItems(loadTable());
-
+        ObservableList<RequestModel> requestModels1 = loadTable();
+        requestsTable.setItems(requestModels1);
+        requestsTable.setPlaceholder(new Label("No friend requests yet"));
     }
 
 
     private ObservableList<RequestModel> loadTable() {
-        /*
-        LinkedList<RequestModel> requests = new LinkedList<>();
-        List<UsersRequestsDTO> friendRequests = service.getFriendRequests(userId);
-        friendRequests.stream().
-                forEach(x -> {
-                    if (x.getTo().getId() == this.userId) {
-                        User user = x.getFrom();
-                        String firstName = user.getFirstName();
-                        String lastName = user.getLastName();
-                        LocalDateTime data = x.getDate();
-                        Status status = x.getStatus();
-                        RequestModel requestModel = new RequestModel(user.getId().toString(), firstName, lastName, data.format(formatter), status
-                                .toString());
-                        requests.add(requestModel);
-                    }
-                });*/
         service.getFriendRequestsPag(requests, userId, pageSize, offsetRec);
         offsetRec = pageSize * pageNumberRec + pageSize;
         pageNumberRec++;
@@ -121,7 +117,6 @@ public class FriendRequestsController implements Initializable, Observer {
             requests.clear();
             offsetRec=0;
             pageNumberRec=0;
-            requestsTable.setItems(loadTable());
         }
     }
 
@@ -138,7 +133,6 @@ public class FriendRequestsController implements Initializable, Observer {
             requests.clear();
             offsetRec=0;
             pageNumberRec=0;
-            requestsTable.setItems(loadTable());
         }
     }
 
@@ -152,28 +146,9 @@ public class FriendRequestsController implements Initializable, Observer {
         requests.clear();
         offsetRec=0;
         pageNumberRec=0;
-        requestsTable.setItems(loadTable());
     }
 
     public ObservableList<RequestModel> loadSentRequests() {
-        /*
-        LinkedList<RequestModel> requests = new LinkedList<>();
-        List<UsersRequestsDTO> friendRequests = service.sentFriendRequests(userId);
-        friendRequests.stream().
-                forEach(x -> {
-                    if (x.getFrom().getId() == this.userId) {
-                        User user = x.getTo();
-                        String firstName = user.getFirstName();
-                        String lastName = user.getLastName();
-                        LocalDateTime data = x.getDate();
-                        Status status = x.getStatus();
-                        RequestModel requestModel = new RequestModel(user.getId().toString(), firstName, lastName, data.format(formatter), status
-                                .toString());
-                        requests.add(requestModel);
-                    }
-                });
-
-         */
         service.sentFriendRequestsPag(requests, userId, pageSize, offsetSend);
         offsetSend = pageSize * pageNumberSend + pageSize;
         pageNumberSend++;
@@ -185,7 +160,9 @@ public class FriendRequestsController implements Initializable, Observer {
         requests.clear();
         pageNumberSend = 0;
         offsetSend = 0;
-        requestsTable.setItems(loadSentRequests());
+
+        ObservableList<RequestModel> requestModels1 = loadSentRequests();
+        requestsTable.setItems(loadTable());
         acceptButton.setDisable(true);
         acceptAllButton.setDisable(true);
         myFriendRequests.setDisable(true);
@@ -200,6 +177,7 @@ public class FriendRequestsController implements Initializable, Observer {
                 } else {
                     int to = Integer.parseInt(requestModels.get(0).getId());
                     try {
+                        requestsTable.setVisible(true);
                         service.deleteFriendRequest(userId, to);
                         requests.clear();
                         offsetSend=0;
@@ -219,6 +197,7 @@ public class FriendRequestsController implements Initializable, Observer {
                     requests.clear();
                     pageNumberRec = 0;
                     offsetRec = 0;
+                    ObservableList<RequestModel> requestModels1 = loadTable();
                     requestsTable.setItems(loadTable());
                     acceptButton.setDisable(false);
                     acceptAllButton.setDisable(false);
@@ -238,6 +217,12 @@ public class FriendRequestsController implements Initializable, Observer {
         requests.clear();
         offsetSend=0;
         pageNumberSend=0;
-        requestsTable.setItems(loadSentRequests());
+        ObservableList<RequestModel> requestModels1 = loadTable();
+        requestsTable.setItems(loadTable());
+    }
+
+    public void homeClicked() {
+        Stage stage = (Stage) homeButton.getScene().getWindow();
+        stage.close();
     }
 }
