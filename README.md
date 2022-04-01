@@ -4,7 +4,7 @@ This is a small social network application written in java, using JavaFx for  gr
 This application is maded using Java and JavaFx framework for graphical interface and PostgresSql database for persistent storage.
 
 Features:
-  -log in
+  -log in\n
   -sign up
   -add friend
   -search user
