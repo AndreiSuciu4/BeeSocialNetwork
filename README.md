@@ -1,6 +1,4 @@
 # BeeSocialNetwork
-This is a small social network application written in java, using JavaFx for  graphical interface.
-
 This application is maded using Java and JavaFx framework for graphical interface and PostgresSql database for persistent storage.
 
 Features:</br>
@@ -11,7 +9,7 @@ Features:</br>
   5.accept/delete a friend request</br>
   6.view friend</br>
   7.send message</br>
-  8.delete mesage</br>
+  8.delete message</br>
   9.reply message</br>
   10.notification</br>
   11.schedule event</br>
